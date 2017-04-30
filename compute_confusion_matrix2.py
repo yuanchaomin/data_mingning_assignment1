@@ -8,16 +8,6 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import confusion_matrix
 
-
-def compute_confusion_matrix(true_label_file, predicted_label_file, label_address):
-    true_label = np.genfromtxt(true_label_file, delimiter=',', dtype=str)
-    predicted_label = np.genfromtxt(predicted_label_file, delimiter=',', dtype=str)
-    label_list = list(np.genfromtxt(label_address, delimiter=',', dtype=str))
-    confusion_matrix_ = confusion_matrix(true_label, predicted_label, labels=label_list)
-
-    return confusion_matrix_, label_list
-
-
 def r_c_sum(matrix, row, column):
     count = 0
     if column == 'all':
@@ -31,10 +21,21 @@ def r_c_sum(matrix, row, column):
     return count
 
 
-true_label_file_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/train_test_data/my_test_label.csv'
-predict_label_file_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/logit_test_label.csv'
-label_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/intermieidate/group_label.csv'
-
+def calculate_r_c_sum(matrix_arg):
+    matrix = matrix_arg
+    new_row = np.zeros((1,len(matrix)))
+    new_column = np.empty([len(matrix) + 1, 1])
+    matrix = np.concatenate([matrix,new_row], axis=0)
+    matrix = np.concatenate([matrix,new_column], axis = 1)
+    print(np.shape(matrix))
+    print(np.shape(new_column))
+    print(np.shape(new_row))
+    print(matrix)
+    for row in range(0,len(matrix)):
+        matrix[row, len(matrix) - 1] = r_c_sum(matrix, row,'all')
+    for column in range(0,len(matrix)):
+        matrix[len(matrix) - 1, column] = r_c_sum(matrix, 'all', column)
+    return matrix
 
 class confusion_matrix_builder:
     def __init__(self, true_label_file_address, predicted_label_file_address, label_address):
@@ -57,19 +58,6 @@ class confusion_matrix_builder:
         df_matrix.insert(0, 'true_label||predicted_label', pd.Series(label_list))
         df_matrix.to_csv(matrix_withheader_address, index=False)
 
-
-# if __name__ == '__main__':
-#     true_label_file_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/train_test_data/my_test_label.csv'
-#     predict_label_file_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/logit_test_label.csv'
-#     label_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/intermieidate/group_label.csv'
-#     matrix_withheader_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/matrix_header.csv'
-#     matrix_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/matrix.csv'
-#
-#     k = confusion_matrix_builder(true_label_file_address,predict_label_file_address,label_address)
-#     m,n = k.compute_confusion_matrix()
-#     k.save_file(m,n,matrix_withheader_address,matrix_address)
-
-
 class analysis_confusion_matrix:
     def __init__(self, data_address):
         self.df = pd.read_csv(data_address)
@@ -79,19 +67,21 @@ class analysis_confusion_matrix:
         return self.df
 
 
-if __name__ == '__main__':
-    true_label_file_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/train_test_data/my_test_label.csv'
-    predict_label_file_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/logit_test_label.csv'
-    label_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/intermieidate/group_label.csv'
-    matrix_withheader_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/matrix_header.csv'
-    matrix_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/matrix.csv'
-    confusion_matrix_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/matrix_header.csv'
-    df = analysis_confusion_matrix(confusion_matrix_address).calculate_binary_confusion_matix()
-    j, l = compute_confusion_matrix(true_label_file_address, predict_label_file_address, label_address)
-    a = np.matrix('1 2; 3 4')
-    print(r_c_sum(a, 1, 'all'))
-    print(r_c_sum(a, 0, 'all'))
-    print(r_c_sum(a, 'all', 0))
-    print(r_c_sum(a, 'all', 1))
 
-    #
+if __name__ == '__main__':
+    true_label_file_address = 'C:/Users/Chaomin/Desktop/data_mining/data/train_test_data/my_test_label.csv'
+    predict_label_file_address = 'C:/Users/Chaomin/Desktop/data_mining/data/result/logit_test_label.csv'
+    label_address = 'C:/Users/Chaomin/Desktop/data_mining/data/intermediate/group_label.csv'
+    matrix_withheader_address = 'C:/Users/Chaomin/Desktop/data_mining/data/result/matrix_header.csv'
+    matrix_address = 'C:/Users/Chaomin/Desktop/data_mining/data/result/matrix.csv'
+    confusion_matrix_address = 'C:/Users/Chaomin/Desktop/data_mining/data/result/matrix_header.csv'
+    df = analysis_confusion_matrix(confusion_matrix_address).calculate_binary_confusion_matix()
+    k = confusion_matrix_builder(true_label_file_address,predict_label_file_address,label_address)
+    j, l = k.compute_confusion_matrix()
+    # a = np.matrix('1 2; 3 4')
+    # print(r_c_sum(a, 1, 'all'))
+    # print(r_c_sum(a, 0, 'all'))
+    # print(r_c_sum(a, 'all', 0))
+    # print(r_c_sum(a, 'all', 1))
+    j_2 = calculate_r_c_sum(j)
+    pd.DataFrame(j_2).to_csv('C:/Users/Chaomin/Desktop/data_mining/data/result/test_sum.csv')
