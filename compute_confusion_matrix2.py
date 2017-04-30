@@ -65,5 +65,4 @@ if __name__ == '__main__':
     m,n = k.compute_confusion_matrix(True, 'old.csv','new.csv')
 
 
-##alksjdkhasd
-kahskdhalkaksd
+# I just need this to test my code
