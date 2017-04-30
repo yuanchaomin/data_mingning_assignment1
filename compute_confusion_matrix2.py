@@ -63,11 +63,33 @@ class  analysis_confusion_matrix:
 
     def calculate_binary_confusion_matix(self):
         rows = self.df.iterrows()
-        a = next(rows)[1]
+        return self.df
 
 
 
 if __name__ == '__main__':
+    true_label_file_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/train_test_data/my_test_label.csv'
+    predict_label_file_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/logit_test_label.csv'
+    label_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/intermieidate/group_label.csv'
+    matrix_withheader_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/matrix_header.csv'
+    matrix_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/matrix.csv'
     confusion_matrix_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/matrix_header.csv'
-    k = analysis_confusion_matrix(confusion_matrix_address)
-    arcade = next(k.calculate_binary_confusion_matix())[1]
+    df = analysis_confusion_matrix(confusion_matrix_address).calculate_binary_confusion_matix()
+    j,l = compute_confusion_matrix(true_label_file_address,predict_label_file_address,label_address)
+
+    l.insert(0,'true_label||predicted_label')
+    l2 = []
+    for j in l:
+        if j != l[0]:
+            l2.append(j)
+    l3 = []
+    for i in range(0,len(l2)):
+        l3.append(l[0])
+
+    index_zip = zip(l3,l2)
+
+    index_list =[]
+    for i,j in index_zip:
+        index_list.append(df[[str(i), str(j)]])
+
+
