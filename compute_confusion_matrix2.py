@@ -45,15 +45,29 @@ class confusion_matrix_builder:
         df_matrix.insert(0,'true_label||predicted_label', pd.Series(label_list))
         df_matrix.to_csv(matrix_withheader_address, index = False)
 
+# if __name__ == '__main__':
+#     true_label_file_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/train_test_data/my_test_label.csv'
+#     predict_label_file_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/logit_test_label.csv'
+#     label_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/intermieidate/group_label.csv'
+#     matrix_withheader_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/matrix_header.csv'
+#     matrix_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/matrix.csv'
+#
+#     k = confusion_matrix_builder(true_label_file_address,predict_label_file_address,label_address)
+#     m,n = k.compute_confusion_matrix()
+#     k.save_file(m,n,matrix_withheader_address,matrix_address)
+
+
+class  analysis_confusion_matrix:
+    def __init__(self, data_address):
+        self.df = pd.read_csv(data_address)
+
+    def calculate_binary_confusion_matix(self):
+        rows = self.df.iterrows()
+        a = next(rows)[1]
+
+
+
 if __name__ == '__main__':
-    true_label_file_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/train_test_data/my_test_label.csv'
-    predict_label_file_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/logit_test_label.csv'
-    label_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/intermieidate/group_label.csv'
-    matrix_withheader_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/matrix_header.csv'
-    matrix_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/matrix.csv'
-
-    k = confusion_matrix_builder(true_label_file_address,predict_label_file_address,label_address)
-    m,n = k.compute_confusion_matrix()
-    k.save_file(m,n,matrix_withheader_address,matrix_address)
-
-
+    confusion_matrix_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/matrix_header.csv'
+    k = analysis_confusion_matrix(confusion_matrix_address)
+    arcade = next(k.calculate_binary_confusion_matix())[1]
