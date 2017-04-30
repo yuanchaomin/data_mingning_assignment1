@@ -18,22 +18,10 @@ def compute_confusion_matrix(true_label_file, predicted_label_file,label_address
      return confusion_matrix_, label_list
  
 
-true_label_file_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/train_test_data'
+true_label_file_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/train_test_data/my_test_label.csv'
 predict_label_file_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/logit_test_label.csv'
 label_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/intermieidate/group_label.csv'
 
-#==============================================================================
-# matrix, label_list = compute_confusion_matrix(true_label_file_address, predict_label_file_address, label_address)
-# np.savetxt('test.csv',  matrix,fmt='%5d', delimiter=',') 
-# 
-# df_matrix = pd.DataFrame(matrix)
-# #label_list.insert(0,'true_label/predicted_label')
-# df_matrix.columns = label_list
-# df_matrix.insert(0,'true_label||predicted_label', pd.Series(label_list))
-# df_matrix.to_csv('true_table2.csv', index = False)
-# 
-# 
-#==============================================================================
 class confusion_matrix_builder:
     def __init__(self,true_label_file_address, predicted_label_file_address, label_address):
         self.true_label_file_address = true_label_file_address
@@ -58,8 +46,14 @@ class confusion_matrix_builder:
         df_matrix.to_csv(matrix_withheader_address, index = False)
 
 if __name__ == '__main__':
+    true_label_file_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/train_test_data/my_test_label.csv'
+    predict_label_file_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/logit_test_label.csv'
+    label_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/intermieidate/group_label.csv'
+    matrix_withheader_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/matrix_header.csv'
+    matrix_address = 'C:/Users/Chaomin/Desktop/new/data_mining/data/result/matrix.csv'
+
     k = confusion_matrix_builder(true_label_file_address,predict_label_file_address,label_address)
-    #m,n = k.compute_confusion_matrix(False)
     m,n = k.compute_confusion_matrix()
+    k.save_file(m,n,matrix_withheader_address,matrix_address)
 
 
