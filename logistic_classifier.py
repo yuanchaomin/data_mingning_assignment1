@@ -57,4 +57,4 @@ class LogisticClassifier:
         np.delete(data, 0, axis = 0)
         np.delete(label,0, axis = 0)
 
-        logit_cl = LogisticClassifier(data, label)
+        #logit_cl = LogisticClassifier(data, label)
