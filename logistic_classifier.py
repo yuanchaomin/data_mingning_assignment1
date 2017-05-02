@@ -1,28 +1,28 @@
 import numpy as np
+import pandas as pd
 
 
 class DataLoader:
-    def __init__(self,data_address, label_address):
+    def __init__(self,data_address, label_address, predict_matrix_address):
         self.data = np.genfromtxt(data_address, delimiter=',')
         self.label = np.genfromtxt(label_address, delimiter =',')
-
+        self.predict_matrtix = np.genfromtxt(predict_matrix_address, delimiter = ',')
     def return_value(self):
-        return self.data, self.label
+        return self.data, self.label, self.predict_matrtix
 
 
 class LogisticClassifier:
     def __init__(self, data, label):
         self.data = np.matrix(data)
         self.label = np.matrix(label)
-        return
 
     @staticmethod
     def sigmoid(x):
         return 1.0 / (1 + np.exp(-x))
 
     def gradient_ascent(self,data_matrix,label_matrix):
-        matrix = data_matrix
-        label_value = label_matrix.T
+        matrix = self.data
+        label_value = self.label.T
         m,n = np.shape(matrix)
         alpha = 0.001
         max_steps = 600
@@ -47,14 +47,20 @@ class LogisticClassifier:
         #
         #         return
 
-    if __name__  == "__main__":
-        data_address = 'C:/Users/Chaomin/Desktop/data_mining/data/test_data/test_data_for_logit_r/logit_test_data.csv'
-        label_address = 'C:/Users/Chaomin/Desktop/data_mining/data/test_data/test_data_for_logit_r/label.csv'
-        data_loader = DataLoader(data_address, label_address)
+if __name__  == "__main__":
+    data_address = 'C:/Users/Chaomin/Desktop/data_mining/data/classifier_data_for_test/test_data_for_logit_r/logit_train_data.csv'
+    label_address = 'C:/Users/Chaomin/Desktop/data_mining/data/classifier_data_for_test/test_data_for_logit_r/logit_train_label.csv'
+    data_loader = DataLoader(data_address, label_address)
 
-        data, label = data_loader.return_value()
+    data, label, predict_matrix = data_loader.return_value()
 
-        np.delete(data, 0, axis = 0)
-        np.delete(label,0, axis = 0)
+    np.delete(data, 0, axis = 0)
+    np.delete(label,0, axis = 0)
 
-        #logit_cl = LogisticClassifier(data, label)
+    logit_cl = LogisticClassifier(data, label)
+
+    weights = logit_cl.gradient_ascent()
+
+    result_prob = logit_cl.predict_prob(predict_matrix, weights)
+
+    print(result_prob)
