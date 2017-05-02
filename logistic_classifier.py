@@ -20,12 +20,12 @@ class LogisticClassifier:
     def sigmoid(x):
         return 1.0 / (1 + np.exp(-x))
 
-    def gradient_ascent(self,data_matrix,label_matrix):
+    def gradient_ascent(self):
         matrix = self.data
         label_value = self.label.T
         m,n = np.shape(matrix)
-        alpha = 0.001
-        max_steps = 600
+        alpha = 0.000001
+        max_steps = 31000
         weights = np.ones((n,1))
         for i in range((max_steps)):
             y_bar = self.sigmoid(np.dot(matrix, weights))
@@ -50,12 +50,13 @@ class LogisticClassifier:
 if __name__  == "__main__":
     data_address = 'C:/Users/Chaomin/Desktop/data_mining/data/classifier_data_for_test/test_data_for_logit_r/logit_train_data.csv'
     label_address = 'C:/Users/Chaomin/Desktop/data_mining/data/classifier_data_for_test/test_data_for_logit_r/logit_train_label.csv'
-    data_loader = DataLoader(data_address, label_address)
+    predict_matrix_address = 'C:/Users/Chaomin/Desktop/data_mining/data/classifier_data_for_test/test_data_for_logit_r/logit_test_data.csv'
+    data_loader = DataLoader(data_address, label_address, predict_matrix_address)
 
     data, label, predict_matrix = data_loader.return_value()
 
-    np.delete(data, 0, axis = 0)
-    np.delete(label,0, axis = 0)
+    # np.delete(data, 0, axis = 0)
+    # np.delete(label,0, axis = 0)
 
     logit_cl = LogisticClassifier(data, label)
 
@@ -63,4 +64,6 @@ if __name__  == "__main__":
 
     result_prob = logit_cl.predict_prob(predict_matrix, weights)
 
+    print(weights)
     print(result_prob)
+
