@@ -46,3 +46,13 @@ class LogisticClassifier:
         #     if self.prob >= float(threshold):
         #
         #         return
+
+    if __name__  == "__main__":
+        data_address = 'C:/Users/Chaomin/Desktop/data_mining/data/test_data/test_data_for_logit_r/logit_test_data.csv'
+        label_address = 'C:/Users/Chaomin/Desktop/data_mining/data/test_data/test_data_for_logit_r/label.csv'
+        data_loader = DataLoader(data_address, label_address)
+
+        data, label = data_loader.return_value()
+
+        np.delete(data, 0, axis = 0)
+        np.delete(label,0, axis = 0)
