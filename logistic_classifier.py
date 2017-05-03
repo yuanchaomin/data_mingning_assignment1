@@ -34,6 +34,24 @@ class LogisticClassifier:
             weights = weights + alpha * matrix.T * error
         return weights
 
+    def stochastic_gradient_ascent(self, max_steps):
+        matrix = self.data
+        label_value = self.label.T
+        m, n = np.shape(matrix)
+        weights = np.ones(n)
+        for j in range(max_steps):
+            dataIndex = range(m)
+            for i in range(m):
+                alpha = 4 / (1.0 + j + i) + 0.01
+                randIndex = int(np.random.uniform(0, len(dataIndex)))
+                y_bar = self.sigmoid(np.sum(matrix[randIndex]*weights))
+                error = label_value[randIndex] - y_bar
+                weights = weights + alpha * error * matrix[randIndex]
+
+        return weights
+
+
+
     def predict_prob(self, predict_matrix, weights):
         self.prob = self.sigmoid(predict_matrix * weights)
 
@@ -53,17 +71,17 @@ if __name__  == "__main__":
     data_loader = DataLoader(data_address, label_address, predict_matrix_address)
 
     data, label, predict_matrix = data_loader.return_value()
-    ##
+
     # np.delete(data, 0, axis = 0)
     # np.delete(label,0, axis = 0)
 
     logit_cl = LogisticClassifier(data, label)
 
-    weights = logit_cl.gradient_ascent()
-
-    result_prob = logit_cl.predict_prob(predict_matrix, weights)
-    predict_label = logit_cl.predict_label(predict_matrix,weights,'0.5')
-    print(weights)
+    #weights = logit_cl.gradient_ascent()
+    weights = logit_cl.stochastic_gradient_ascent(150)
+    #result_prob = logit_cl.predict_prob(predict_matrix, weights)
+    #predict_label = logit_cl.predict_label(predict_matrix,weights,'0.5')
+    #print(weights)
     # print(result_prob)
     # print(predict_label)
 
