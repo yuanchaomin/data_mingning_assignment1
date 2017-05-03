@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-
+from sklearn import preprocessing
 
 class DataLoader:
     def __init__(self,data_address, label_address, predict_matrix_address):
@@ -13,7 +13,7 @@ class DataLoader:
 
 class LogisticClassifier:
     def __init__(self, data, label):
-        self.data = np.matrix(data)
+        self.data = preprocessing.scale(np.matrix(data))
         self.label = np.matrix(label)
 
     @staticmethod
@@ -25,8 +25,8 @@ class LogisticClassifier:
         matrix = self.data
         label_value = self.label.T
         m,n = np.shape(matrix)
-        alpha = 0.000001
-        max_steps = 55000
+        alpha = 0.0001
+        max_steps = 100000
         weights = np.ones((n,1))
         for i in range((max_steps)):
             y_bar = self.sigmoid(np.dot(matrix, weights))
@@ -34,31 +34,31 @@ class LogisticClassifier:
             weights = weights + alpha * matrix.T * error
         return weights
 
-    def stochastic_gradient_ascent(self, max_steps):
+    def stochastic_gradient_ascent(self,max_steps):
         matrix = self.data
         label_value = self.label.T
         m, n = np.shape(matrix)
-        weights = np.ones(n)
+        weights = np.ones((1,n))
         for j in range(max_steps):
             dataIndex = range(m)
             for i in range(m):
-                alpha = 4 / (1.0 + j + i) + 0.01
+                alpha = 4/(1.0 + i + j) + 0.001
                 randIndex = int(np.random.uniform(0, len(dataIndex)))
-                y_bar = self.sigmoid(np.sum(matrix[randIndex]*weights))
+                y_bar = self.sigmoid(np.sum(np.dot(matrix[randIndex], weights.T)))
                 error = label_value[randIndex] - y_bar
                 weights = weights + alpha * error * matrix[randIndex]
-
-        return weights
+                np.delete(dataIndex, randIndex)
+        return weights.T
 
 
 
     def predict_prob(self, predict_matrix, weights):
-        self.prob = self.sigmoid(predict_matrix * weights)
+        self.prob = self.sigmoid(preprocessing.scale(predict_matrix) * weights)
 
         return self.prob
 
     def predict_label(self, predict_matrix, weights, threshold):
-        self.prob = self.sigmoid(predict_matrix * weights)
+        self.prob = self.sigmoid(preprocessing.scale(predict_matrix) * weights)
         prob_to_label_f = np.vectorize(lambda x : 1 if x >= float(threshold) else 0)
         self.predict_label =  prob_to_label_f(self.prob)
 
@@ -78,10 +78,12 @@ if __name__  == "__main__":
     logit_cl = LogisticClassifier(data, label)
 
     #weights = logit_cl.gradient_ascent()
-    weights = logit_cl.stochastic_gradient_ascent(150)
+    weights= logit_cl.stochastic_gradient_ascent(150)
+    print(weights)
+    #print(np.shape(matrix_rand))
     #result_prob = logit_cl.predict_prob(predict_matrix, weights)
     #predict_label = logit_cl.predict_label(predict_matrix,weights,'0.5')
     #print(weights)
-    # print(result_prob)
-    # print(predict_label)
+    #print(result_prob)
+    #print(predict_label)
 
