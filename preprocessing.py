@@ -28,19 +28,21 @@ def split(X, test_data_size_ratio):
     :param test_size: specify the size of test data
     :return: two array , one is the index of a training data, anther is  the index of test data 
     """
-    m,n = np.shape(X)
-    index = np.zeros((m,1))
-    for i in range(m):
-        index[i] = i
-    X = np.concatenate([index,X], axis = 1)
-    index = index.flatten()
-
-    test_size = round(float(test_data_size_ratio) * len(index))
-    X_test = np.random.choice(len(index), test_size, replace=False)
-
     X_df = pd.DataFrame(X)
+    index = X_df.index
+    print(type(index))
+    test_size = round(float(test_data_size_ratio) * len(index))
+    X_test_index = np.random.choice(len(index), test_size, replace=False)
+    print(type(X_test_index))
+    X_train_index = list(set(index) - set(X_test_index))
 
-    return X, X_test,X_df
+    X_test_df = X_df.ix[X_test_index]
+    X_train_df = X_df.ix[X_train_index]
+
+    X_test_ay = X_test_df.as_matrix()
+    X_train_ay = X_train_df.as_matrix()
+
+    return X_train_ay, X_test_ay
 
 if __name__ == "__main__":
     #a = np.matrix([[0,0,103],[40,50,6],[78,8,9]])
@@ -50,4 +52,4 @@ if __name__ == "__main__":
     data_loader = lc.DataLoader(data_address, label_address, predict_matrix_address)
     data, label, predict_matrix, unique_label = data_loader.return_value()
 
-    q,w,e = split(data, 0.5)
+    X_train_ay, X_test_ay = split(data, 0.2)
