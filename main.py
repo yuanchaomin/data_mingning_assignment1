@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 import preprocessing
 import eigen_ddcomposition as ed
+import logistic_classifier
+import compute_confusion_matrix2 as cc
+
 b = []
 for i in range(1,13627):
     b.append('feature:'+ str(i))
@@ -17,18 +20,23 @@ X_train_ay, X_test_ay, X_train_index, X_test_index = preprocessing.split(appdata
 #np.shape(X_train_ay) == (80,13628) #np.shape(X_test_ay) == (20, 13628)
 # The first column of X_train_ay and X_test_ay is the app_name, and the last column is the app_label
 m_test, n_test = np.shape(X_test_ay)
-X__test_appname = X_test_ay[:, n_test - 1]
-X_test_label = X_test_ay[:,0]
-X_test = X_test_ay[:, 1:n_test - 1]
-#print(np.shape(X_test))   (80,13626)
+m_train, n_train = np.shape(X_train_ay)
+X_test_label = X_test_ay[:, n_test - 1]
+X_train_label = X_train_ay[:,n_train - 1]
+X_test_appname = X_test_ay[:,0]
+X_train_appname = X_train_ay[:,0]
+X_raw_test = X_test_ay[:, 1:n_test - 1]
+X_raw_train = X_train_ay[:, 1: n_train - 1]
+#print(np.shape(X_raw_test))   (80,13626)
+#print(np.shape(X_raw_train))  (20,13626)
 
 df_train_appdata = df_appdata.ix[X_train_index]
 df_train_mean = df_appdata.groupby('app_label').mean().reset_index()
 #np.shape(df_train_mean) == (29, 13627), the first column is app_label, and the rest is 13627 features.
 train_mean_mat = df_train_mean.iloc[:,1:]
 train_mean_label = df_train_mean.iloc[:,0]
-#np.shape(df_train_mean_mat) == (29, 13626), the app_label column was removed
-#df_train_label is the label column in df_train_mean_mat
+##np.shape(df_train_mean_mat) == (29, 13626), the app_label column was removed
+##df_train_label is the label column in df_train_mean_mat
 
 eigend_values, eigend_vectors, c_m = ed.eigend(train_mean_mat)
 svd_dict = dict(zip(eigend_values, eigend_vectors))
@@ -49,3 +57,33 @@ preprocessing.clean_file(svm_matrix_address, cleaned_svm_matrix_address)
 
 
 
+## data transformation
+svd_matrix =  np.genfromtxt('C:/Users/Chaomin/Desktop/data_mining/data/intermediate/cleaned_svd_matrix.csv', delimiter=',')
+
+svd_matrix = np.matrix(svd_matrix[1:,:])
+y_train = X_train_label
+x_test = X_test_label
+X_train = np.dot(X_raw_train,svd_matrix).astype(float)
+X_test = np.dot(X_raw_test, svd_matrix).astype(float)
+
+
+logit_cl = logistic_classifier.LogisticClassifier()
+
+
+weights = logit_cl.fit(X_train, y_train, multiclass=True)
+prob,in_matrix = logit_cl.predict_prob(X_test,weights,multiclass=True)
+
+result_list = logit_cl.predict_label(prob,0.5, multiclass=True)
+
+label_address = 'C:/Users/Chaomin/Desktop/data_mining/data/intermediate/group_label.csv'
+label = np.genfromtxt(label_address, delimiter=',',dtype=str)
+X_test_label = np.array(X_test_label, dtype=str)
+result_array = np.array(result_list, dtype=str)
+k = cc.confusion_matrix_builder(X_test_label,result_array,label)
+j, l = k.compute_confusion_matrix()
+j_2 = cc.calculate_r_c_sum(j)
+
+row_header_l =list(['binary_classifier_by_label','TP','FN','FP','TN','ACC','SPE','PRE','F1'])
+column_extra_string = 'binary_classifier_by_label'
+result_df = cc.calculate_acc( j, j_2,row_header_l,column_extra_string,l)
+result_df.to_csv('C:/Users/Chaomin/Desktop/data_mining/data/result/acc_result3.csv', index = False)
