@@ -4,7 +4,7 @@ from sklearn import linear_model as lm
 import compute_confusion_matrix2 as cc
 import logistic_classifier as lc
 import time
-
+import importlib
 s_1000 = np.load('C:/Users/Chaomin/Desktop/data_mining/data/intermediate/my_s_1000_np_float64.npy')
 U_1000 = np.load('C:/Users/Chaomin/Desktop/data_mining/data/intermediate/my_U_1000_np_float64.npy')
 V_1000 = np.load('C:/Users/Chaomin/Desktop/data_mining/data/intermediate/my_V_1000_np_float64.npy')
@@ -42,7 +42,7 @@ y_test = X_test_label
 # logit_classifier.fit(X_train,y_train)
 # print(logit_classifier.coef_)
 # print(logit_classifier.intercept_)
-
+importlib.reload(lc)
 first_time_location = time.clock()
 logit_cl = lc.LogisticClassifier()
 weights = logit_cl.fit(X_train, y_train, multiclass=True)
@@ -51,8 +51,8 @@ result_list = logit_cl.predict_label(prob,0.5, multiclass=True)
 predict_result_array = np.array(result_list, dtype=str)
 # predict_result_array = logit_classifier.predict(X_test)
 
-matrix_withheader_address = 'C:/Users/Chaomin/Desktop/data_mining/data/intermediate/result/matrix_header_sk4.csv'
-matrix_address = 'C:/Users/Chaomin/Desktop/data_mining/data/intermediate/result/matrix_sk4.csv'
+matrix_withheader_address = 'C:/Users/Chaomin/Desktop/data_mining/data/intermediate/result/matrix_header_sk6.csv'
+matrix_address = 'C:/Users/Chaomin/Desktop/data_mining/data/intermediate/result/matrix_sk6.csv'
 
 label_address = 'C:/Users/Chaomin/Desktop/data_mining/data/intermediate/try_y_train.csv'
 label = np.genfromtxt(label_address, delimiter=',', dtype=str)
@@ -69,7 +69,7 @@ row_header_l =list(['binary_classifier_by_label','TP','FN','FP','TN','ACC','SPE'
 column_extra_string = 'binary_classifier_by_label'
 result_df = cc.calculate_acc( confusion_matrix, acc_matrix,row_header_l,column_extra_string,label_list, data_sample_size=m_test)
 #result_df.to_csv('C:/Users/Chaomin/Desktop/data_mining/data/intermediate/result/acc.csv', index=False)
-result_df.to_csv('C:/Users/Chaomin/Desktop/data_mining/data/intermediate/result/acc4.csv', index=False)
+result_df.to_csv('C:/Users/Chaomin/Desktop/data_mining/data/intermediate/result/acc6.csv', index=False)
 second_time_location = time.clock()
 
 print('Running time: %s Seconds'%(second_time_location-first_time_location))
