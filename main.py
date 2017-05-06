@@ -4,13 +4,18 @@ import preprocessing
 import eigen_ddcomposition as ed
 import logistic_classifier
 import compute_confusion_matrix2 as cc
+import time
 
+start_time = time.clock()
 b = []
 for i in range(1,13627):
     b.append('feature:'+ str(i))
 b.insert(0,'app_name')
 
-df_appdata = pd.read_csv('C:/Users/Chaomin/Desktop/data_mining/assignment1_2017S1/training_data.csv',names = b, nrows =100)
+matrix_withheader_address = 'C:/Users/Chaomin/Desktop/data_mining/data/result/matrix_header.csv'
+matrix_address = 'C:/Users/Chaomin/Desktop/data_mining/data/result/matrix.csv'
+
+df_appdata = pd.read_csv('C:/Users/Chaomin/Desktop/data_mining/assignment1_2017S1/training_data.csv',names = b, nrows= 1000)
 df_label =pd.read_csv('C:/Users/Chaomin/Desktop/data_mining/assignment1_2017S1/training_labels.csv', names = ['app_name','app_label'])
 df_appdata = pd.merge(df_appdata, df_label, on = ['app_name'])
 # now, np.shape(result) = (100, 13628)
@@ -51,7 +56,7 @@ final_v_matrix = np.matrix(final_v_l).T
 svm_matrix_address = 'C:/Users/Chaomin/Desktop/data_mining/data/intermediate/svd_matrix.csv'
 cleaned_svm_matrix_address = 'C:/Users/Chaomin/Desktop/data_mining/data/intermediate/cleaned_svd_matrix.csv'
 df_svm = pd.DataFrame(final_v_matrix)
-df_svm.to_csv(svm_matrix_address,index = False)
+df_svm.to_csv(svm_matrix_address,index=False)
 
 preprocessing.clean_file(svm_matrix_address, cleaned_svm_matrix_address)
 
@@ -75,15 +80,23 @@ prob,in_matrix = logit_cl.predict_prob(X_test,weights,multiclass=True)
 
 result_list = logit_cl.predict_label(prob,0.5, multiclass=True)
 
-label_address = 'C:/Users/Chaomin/Desktop/data_mining/data/intermediate/group_label.csv'
-label = np.genfromtxt(label_address, delimiter=',',dtype=str)
+#label_address = 'C:/Users/Chaomin/Desktop/data_mining/data/intermediate/group_label.csv'
+#label = np.genfromtxt(label_address, delimiter=',',dtype=str)
+
+label = np.unique(X_train_label)
+label = label.astype(str)
+
 X_test_label = np.array(X_test_label, dtype=str)
 result_array = np.array(result_list, dtype=str)
-k = cc.confusion_matrix_builder(X_test_label,result_array,label)
-j, l = k.compute_confusion_matrix()
-j_2 = cc.calculate_r_c_sum(j)
+confusion_matrix_builder = cc.confusion_matrix_builder(X_test_label,result_array,label)
+confusion_matrix, label_list = confusion_matrix_builder.compute_confusion_matrix()
+acc_matrix = cc.calculate_r_c_sum(confusion_matrix)
 
 row_header_l =list(['binary_classifier_by_label','TP','FN','FP','TN','ACC','SPE','PRE','F1'])
 column_extra_string = 'binary_classifier_by_label'
-result_df = cc.calculate_acc( j, j_2,row_header_l,column_extra_string,l)
+result_df = cc.calculate_acc( confusion_matrix, acc_matrix,row_header_l,column_extra_string,label_list)
 result_df.to_csv('C:/Users/Chaomin/Desktop/data_mining/data/result/acc_result3.csv', index = False)
+
+end_time = time.clock()
+
+print('Running time: %s Seconds'%(end-start))
