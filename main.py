@@ -19,7 +19,7 @@ print('loading data begins !')
 df_appdata = pd.read_csv('C:/Users/Chaomin/Desktop/data_mining/assignment1_2017S1/training_data.csv',names = b)
 df_label =pd.read_csv('C:/Users/Chaomin/Desktop/data_mining/assignment1_2017S1/training_labels.csv', names = ['app_name','app_label'])
 df_appdata = pd.merge(df_appdata, df_label, on = ['app_name'])
-# now, np.shape(result) = (100, 13628)
+#now, np.shape(result) = (100, 13628)
 appdata_matrix = df_appdata.as_matrix()
 
 print('loading data finish!\n')
