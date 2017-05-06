@@ -70,9 +70,14 @@ svd_matrix =  np.genfromtxt('C:/Users/Chaomin/Desktop/data_mining/data/intermedi
 
 svd_matrix = np.matrix(svd_matrix[1:,:])
 y_train = X_train_label
-x_test = X_test_label
+y_test = X_test_label
 X_train = np.dot(X_raw_train,svd_matrix).astype(float)
 X_test = np.dot(X_raw_test, svd_matrix).astype(float)
+X_train_df = pd.DataFrame(X_train)
+X_train_df. to_csv('C:/Users/Chaomin/Desktop/data_mining/data/intermediate/try_X_train.csv')
+X_test_df = pd.DataFrame(X_test)
+X_test_df.to_csv('C:/Users/Chaomin/Desktop/data_mining/data/intermediate/try_X_test.csv')
+
 print('Data transformation finishes !\n')
 print('Logistic model trainning starts !\n')
 logit_cl = logistic_classifier.LogisticClassifier()
@@ -94,6 +99,7 @@ X_test_label = np.array(X_test_label, dtype=str)
 result_array = np.array(result_list, dtype=str)
 confusion_matrix_builder = cc.confusion_matrix_builder(X_test_label,result_array,label)
 confusion_matrix, label_list = confusion_matrix_builder.compute_confusion_matrix()
+confusion_matrix_builder.save_file(confusion_matrix,label_list, matrix_withheader_address,matrix_address)
 acc_matrix = cc.calculate_r_c_sum(confusion_matrix)
 
 row_header_l =list(['binary_classifier_by_label','TP','FN','FP','TN','ACC','SPE','PRE','F1'])
@@ -105,4 +111,4 @@ print('final result writing finishes !\n')
 
 end_time = time.clock()
 
-print('Running time: %s Seconds'%(end-start))
+print('Running time: %s Seconds'%(end_time-start_time))

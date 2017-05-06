@@ -118,8 +118,8 @@ class LogisticClassifier:
         """
 
         m,n = np.shape(X_train)
-        alpha = 0.001
-        max_steps = 500
+        alpha = 0.1
+        max_steps = 200
         weights = np.ones((n,1))
         for i in range(max_steps):
             y_bar = self.sigmoid(np.dot(X_train, weights))
@@ -150,15 +150,15 @@ class LogisticClassifier:
             return prob, inter_matrix
 
         else:
-           prob = self.sigmoid(preprocessing.scale(predict_matrix) * weights)
+           prob = self.sigmoid(X_test * weights)
 
 
         return prob
 
-    def predict_label(self, prob,threshold, multiclass=False):
+    def predict_label(self, prob, threshold, multiclass=False):
         if multiclass:
             m,n = np.shape(prob)
-            j = len(y_train)
+            # j = len(y_train)
             result_array = np.ones((m,1))
             result_list_final = []
             y_unique_label_list = list(self.unique_label)
@@ -178,40 +178,75 @@ class LogisticClassifier:
             predict_label =  prob_to_label_f(prob)
             return predict_label
 
+# if __name__  == "__main__":
+#     #data_address = 'C:/Users/Chaomin/Desktop/data_mining/data/classifier_data_for_test/test_data_for_logit_r/logit_train_data.csv'
+#     data_address = 'C:/Users/Chaomin/Desktop/data_mining/data/intermediate/try_X_train.csv'
+#     label_address = 'C:/Users/Chaomin/Desktop/data_mining/data/classifier_data_for_test/test_data_for_logit_r/logit_train_labelCopy.csv'
+#     #predict_matrix_address = 'C:/Users/Chaomin/Desktop/data_mining/data/classifier_data_for_test/test_data_for_logit_r/logit_test_data.csv'
+#     predict_matrix_address = 'C:/Users/Chaomin/Desktop/data_mining/data/intermediate/try_X_train.csv'
+#     data_loader = DataLoader(data_address, label_address, predict_matrix_address)
+#     #data_loader.scale()
+#     data, label, predict_matrix, unique_label = data_loader.return_value()
+#
+#     # np.delete(data, 0, axis = 0)
+#     # np.delete(label,0, axis = 0)
+#     X_train = data[1:,1:]
+#     X_test = predict_matrix[1:,1:]
+#
+#     logit_cl = LogisticClassifier()
+#
+#     start = time.clock()
+#     # X_train = data
+#     #y_train = list(label)
+#     # y_train = label
+#     #y_train = np.matrix(label, dtype=float).T
+#     #weights = logit_cl.gradient_ascent(X_train, y_train)
+#     #weights= logit_cl.stochastic_gradient_ascent(1000)
+#     #print(weights)
+#     #X_train = np.matrix(data)
+#     #y_train = np.matrix(label)
+#     #a =  logit_cl.generate_single_class_label(y_train, 1)
+#
+#     # X_test = predict_matrix
+#     # weights = logit_cl.fit(X_train, y_train, multiclass=True)
+#     # prob,in_matrix = logit_cl.predict_prob(X_test,weights,multiclass=True)
+#     # result_list = logit_cl.predict_label(prob,0.5, multiclass=True)
+#
+#     #print(np.shape(matrix_rand))
+#     #result_prob = logit_cl.predict_prob(predict_matrix, weights)
+#     #predict_label = logit_cl.predict_label(predict_matrix,weights,'0.5')
+#     #print(weights)
+#     #print(result_prob)
+#     #print(predict_label)
+#     end = time.clock()
+#     print('Running time: %s Seconds' % (end - start))
+
 if __name__  == "__main__":
-    data_address = 'C:/Users/Chaomin/Desktop/data_mining/data/classifier_data_for_test/test_data_for_logit_r/logit_train_data.csv'
-    label_address = 'C:/Users/Chaomin/Desktop/data_mining/data/classifier_data_for_test/test_data_for_logit_r/logit_train_labelCopy.csv'
-    predict_matrix_address = 'C:/Users/Chaomin/Desktop/data_mining/data/classifier_data_for_test/test_data_for_logit_r/logit_test_data.csv'
-    data_loader = DataLoader(data_address, label_address, predict_matrix_address)
-    data_loader.scale()
-    data, label, predict_matrix, unique_label = data_loader.return_value()
+    s_1000 = np.load('C:/Users/Chaomin/Desktop/data_mining/data/intermediate/my_s_1000_np_float64.npy')
+    U_1000 = np.load('C:/Users/Chaomin/Desktop/data_mining/data/intermediate/my_U_1000_np_float64.npy')
+    V_1000 = np.load('C:/Users/Chaomin/Desktop/data_mining/data/intermediate/my_V_1000_np_float64.npy')
 
-    # np.delete(data, 0, axis = 0)
-    # np.delete(label,0, axis = 0)
+    X_train_df = pd.read_csv('C:/Users/Chaomin/Desktop/data_mining/data/intermediate/X_train.csv')
+    X_test_df = pd.read_csv('C:/Users/Chaomin/Desktop/data_mining/data/intermediate/X_test.csv')
 
-    logit_cl = LogisticClassifier()
+    X_train_mat = X_train_df.as_matrix()
+    X_test_mat = X_test_df.as_matrix()
 
-    start = time.clock()
-    X_train = data
-    #y_train = list(label)
-    y_train = label
-    #y_train = np.matrix(label, dtype=float).T
-    #weights = logit_cl.gradient_ascent(X_train, y_train)
-    #weights= logit_cl.stochastic_gradient_ascent(1000)
-    #print(weights)
-    #X_train = np.matrix(data)
-    #y_train = np.matrix(label)
-    #a =  logit_cl.generate_single_class_label(y_train, 1)
-    X_test = predict_matrix
-    weights = logit_cl.fit(X_train, y_train, multiclass=True)
-    prob,in_matrix = logit_cl.predict_prob(X_test,weights,multiclass=True)
-    result_list = logit_cl.predict_label(prob,0.5, multiclass=True)
-    #print(np.shape(matrix_rand))
-    #result_prob = logit_cl.predict_prob(predict_matrix, weights)
-    #predict_label = logit_cl.predict_label(predict_matrix,weights,'0.5')
-    #print(weights)
-    #print(result_prob)
-    #print(predict_label)
-    end = time.clock()
-    print('Running time: %s Seconds' % (end - start))
+    m_train, n_train = np.shape(X_train_mat)
+    m_test, n_test = np.shape(X_test_mat)
+
+    X_train_label = X_train_mat[:, n_train - 1]
+    X_train_label = X_train_label.astype(str)
+    X_test_label = X_test_mat[:, n_test - 1]
+    X_test_label = X_test_label.astype(str)
+
+    X_raw_train = X_train_mat[:, 1: n_train - 1]
+    X_raw_train = X_raw_train.astype(float)
+    X_raw_test = X_test_mat[:, 1: n_train - 1]
+    X_raw_test = X_raw_test.astype(float)
+
+    X_train = np.dot(X_raw_train, V_1000.T)
+    X_test = np.dot(X_raw_test, V_1000.T)
+    y_train = X_train_label
+    y_test = X_test_label
 
