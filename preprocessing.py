@@ -112,7 +112,7 @@ def k_fold_cv_withclass(k, label):
 
 def arrange_data_in_each_fold(result_list, selected_test_fold_index, fold_size):
     infold_index = [i for i in range(fold_size)]
-    test_index = result_list[infold_index[0]]
+    test_index = result_list[infold_index[selected_test_fold_index]]
     infold_test_index = []
     for i in infold_index:
         if i != selected_test_fold_index:
