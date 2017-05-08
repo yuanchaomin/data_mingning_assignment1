@@ -30,10 +30,9 @@ class DataLoader:
 
 
 class LogisticClassifier:
-    def __init__(self):
+    def __init__(self, label):
         self.author = 'Chaomin'
-
-        self.unique_label = None
+        self.unique_label = label
         self.weights = None
 
     def generate_single_class_label(self, y_train_list, label_class):
@@ -119,7 +118,7 @@ class LogisticClassifier:
 
         m,n = np.shape(X_train)
         alpha = 0.1
-        max_steps = 200
+        max_steps = 100
         weights = np.ones((n,1))
         for i in range(max_steps):
             y_bar = self.sigmoid(np.dot(X_train, weights))
