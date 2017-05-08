@@ -2,16 +2,28 @@ import pandas as pd
 import numpy as np
 import logistic_classifier as lc
 import compute_confusion_matrix2 as cc
-
+from numpy import linalg as LA
 
 X_raw_test = np.load('C:/Users/Chaomin/Desktop/data_mining/data/result/X_raw_test.npy')
 y_test = np.load('C:/Users/Chaomin/Desktop/data_mining/data/result/y_test.npy')
 V_t_1000 = np.load('C:/Users/Chaomin/Desktop/data_mining/data/result/v_t_1000.npy')
-V_1000 = np.load('C:/Users/Chaomin/Desktop/data_mining/data/result/V_1000.npy')
+#V_1000 = np.load('C:/Users/Chaomin/Desktop/data_mining/data/result/V_1000.npy')
 label = np.unique(y_test)
+X_all_data = np.load('C:/Users/Chaomin/Desktop/data_mining/data/result/appdata_matrix.npy')
+#X_test = np.dot(X_raw_test,V_1000.T)
 
-X_test = np.dot(X_raw_test,V_1000.T)
+m_all, n_all = np.shape(X_all_data)
+X_raw_all_data = X_all_data[:, 1:n_all - 1]
+X_raw_all_label = X_all_data[:,n_all - 1]
+X_raw_all_data = X_raw_all_data.astype(float)
 
+print('start SVD!')
+U,s,V = LA.svd(X_raw_all_data, full_matrices=False)
+
+print('SVD finish!')
+
+V_1000 = V[:1000,:]
+X_test = np.dot(X_raw_all_data, V_1000.T)
 for i in range(10):
     logit_cl  = lc.LogisticClassifier(label)
     weights_address = 'C:/Users/Chaomin/Desktop/data_mining/data/intermediate/result/win/weight' + str(i) + '.npy'
